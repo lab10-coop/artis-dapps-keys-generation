@@ -3,7 +3,7 @@
   position: absolute;
   bottom: 0;
   height: $footer-height;
-  background-color: #6d2eae;
+  background-color: $color-decent;
 
   @media screen and (max-width: $mobile-width) {
     height: auto;
@@ -11,7 +11,7 @@
   }
 
   &.sokol {
-    background-color: #6ac9b9;
+    background-color: #e97b9c;
   }
 
   .container {

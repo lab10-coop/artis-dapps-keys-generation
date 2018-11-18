@@ -3,7 +3,7 @@ import { constants } from './constants'
 
 const errorMsgNoMetamaskAccount = `You haven't chosen any account in MetaMask.
 Please choose your initial key in MetaMask and reload the page.
-Check POA Network <a href='https://github.com/poanetwork/wiki' target='blank'>wiki</a> for more info.`
+Check ARTIS <a href='https://github.com/poanetwork/wiki' target='blank'>wiki</a> for more info.`
 
 const errorMsgDeniedAccess = 'You have denied access to your accounts'
 
@@ -56,9 +56,9 @@ let getWeb3 = () => {
         console.log(`This is ${netIdName}`)
       } else {
         netIdName = 'ERROR'
-        errorMsg = `You aren't connected to POA Network. 
+        errorMsg = `You aren't connected to ARTIS. 
             Please switch on Metamask and refresh the page. 
-            Check POA Network <a href='https://github.com/poanetwork/wiki' target='blank'>wiki</a> for more info.
+            Check ARTIS <a href='https://github.com/poanetwork/wiki' target='blank'>wiki</a> for more info.
             <b>Current Network ID</b> is <i>${netId}</i>`
         console.log('This is an unknown network.')
       }

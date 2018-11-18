@@ -34,7 +34,7 @@
 
   &-hash {
     height: 30px;
-    color: #6d2eae;
+    color: $color-dark;
     line-height: 16px;
     font-size: 12px;
     display: table-cell;
@@ -69,17 +69,17 @@
 
   &-download {
     @extend %btn;
-    background-color: #6d2eae;
+    background-color: $color-dark;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAANlBMVEX///////////////////////////////////////////////////////////////////////8BOg0gAAAAEXRSTlMASUtWV1hZXF1e5ebn6Orr/GN0dVoAAABnSURBVHja1cnJDYBADENRDzBsYYn7bxaCFFmMaADf/B+0YlbwNSPtE3jvv9Ad29DCsB0dVtKnN8xOGowhCdm5o/eUgOw+AktKQPYFkDygLglQhyRAXZLzWV2iLlFvRb2V7O3qeVa9C41xDOyv+UmuAAAAAElFTkSuQmCC);
 
     &:hover {
-      background-color: #5d2795;
+      background-color: $color-dark2;
     }
   }
 
   &-read-more {
     margin-left: 10px;
-    color: #6d2eae;
+    color: $color-dark;
     text-decoration: none;
 
     &:hover {
@@ -90,11 +90,11 @@
   &-note {
     overflow: hidden;
     position: relative;
-    border: 1px solid #6d2eae;
+    border: 1px solid $color-dark;
     border-radius: 5px;
     padding: 20px 15px 20px 53px;
-    background-color: rgba(109, 46, 174, 0.1);
-    color: #6d2eae;
+    background-color: $color-decent;
+    color: $color-dark;
     text-align: left;
 
     &:before {
@@ -104,7 +104,7 @@
       top: 0;
       bottom: 0;
       width: 42px;
-      background-color: #6d2eae;
+      background-color: $color-decent;
       background-image: url(../images/warning.svg);
       background-repeat: no-repeat;
       background-position: center center;

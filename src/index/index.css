@@ -175,10 +175,10 @@ button:focus {
   .create-keys-button {
     margin-top: 20px;
     display: inline-block;
-    background-color: #08b3f2;
+    background-color: #e97b9c;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAFVBMVEX///////////////////////////9nSIHRAAAABnRSTlMASUrk5udXTd49AAAAOUlEQVR42tXQsQEAIAgDQcAn+4+snRZxAK79KokrIcNBwgYdc0Migwxk8Qsd1TJWDf/KQWobqt+9G4coA99W7as5AAAAAElFTkSuQmCC); }
     .create-keys-button:hover {
-      background-color: #079dd4; }
+      background-color: #72c168; }
   .create-keys-inputs {
     overflow: hidden;
     display: table;
@@ -232,13 +232,13 @@ button:focus {
   position: absolute;
   bottom: 0;
   height: 60px;
-  background-color: #6d2eae; }
+  background-color: #c3da9e; }
   @media screen and (max-width: 414px) {
     .footer {
       height: auto;
       padding: 20px 10px 0; } }
   .footer.sokol {
-    background-color: #6ac9b9; }
+    background-color: #e97b9c; }
   .footer .container {
     position: relative; }
     @media screen and (max-width: 414px) {
@@ -286,7 +286,7 @@ button:focus {
   background-size: cover; }
   .header.sokol {
     background-image: none;
-    background-color: #6ac9b9; }
+    background-color: #e97b9c; }
   .header-logo {
     float: left;
     width: 182px;
@@ -331,7 +331,7 @@ button:focus {
     margin-bottom: 10px; }
   .keys-hash {
     height: 30px;
-    color: #6d2eae;
+    color: #234006;
     line-height: 16px;
     font-size: 12px;
     display: table-cell; }
@@ -351,24 +351,24 @@ button:focus {
     display: inline-block;
     vertical-align: middle; }
   .keys-download {
-    background-color: #6d2eae;
+    background-color: #234006;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAANlBMVEX///////////////////////////////////////////////////////////////////////8BOg0gAAAAEXRSTlMASUtWV1hZXF1e5ebn6Orr/GN0dVoAAABnSURBVHja1cnJDYBADENRDzBsYYn7bxaCFFmMaADf/B+0YlbwNSPtE3jvv9Ad29DCsB0dVtKnN8xOGowhCdm5o/eUgOw+AktKQPYFkDygLglQhyRAXZLzWV2iLlFvRb2V7O3qeVa9C41xDOyv+UmuAAAAAElFTkSuQmCC); }
     .keys-download:hover {
-      background-color: #5d2795; }
+      background-color: #386a3c; }
   .keys-read-more {
     margin-left: 10px;
-    color: #6d2eae;
+    color: #234006;
     text-decoration: none; }
     .keys-read-more:hover {
       text-decoration: underline; }
   .keys-note {
     overflow: hidden;
     position: relative;
-    border: 1px solid #6d2eae;
+    border: 1px solid #234006;
     border-radius: 5px;
     padding: 20px 15px 20px 53px;
-    background-color: rgba(109, 46, 174, 0.1);
-    color: #6d2eae;
+    background-color: #c3da9e;
+    color: #234006;
     text-align: left; }
     .keys-note:before {
       content: '';
@@ -377,7 +377,7 @@ button:focus {
       top: 0;
       bottom: 0;
       width: 42px;
-      background-color: #6d2eae;
+      background-color: #c3da9e;
       background-image: url(../images/warning.svg);
       background-repeat: no-repeat;
       background-position: center center; }
@@ -428,7 +428,7 @@ button:focus {
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: rgba(35, 29, 115, 0.8); }
+    background-color: rgba(56, 106, 60, 0.8); }
   .loading-i {
     animation-duration: 2s;
     animation-fill-mode: forwards;
