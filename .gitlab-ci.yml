@@ -6,5 +6,5 @@ staging:
   script:
     - cd /var/www/nginx/poa-dapps-keys-generation
     - git pull
-    - npm install
+    - npm ci
     - CI=false npm run build
