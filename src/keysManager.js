@@ -10,13 +10,7 @@ export default class KeysManager {
     const KeysManagerAbi = await helpers.getABI(constants.NETWORKS[netId].BRANCH, 'KeysManager')
 
     this.instance = new web3.eth.Contract(KeysManagerAbi, KEYS_MANAGER_ADDRESS)
-
-    const networkName = constants.NETWORKS[netId].NAME.toLowerCase()
-    if (networkName === 'dai-test' || networkName === 'dai') {
-      this.gasPrice = web3.utils.toWei('0', 'gwei')
-    } else {
-      this.gasPrice = web3.utils.toWei('2', 'gwei')
-    }
+    this.gasPrice = 1000000000
   }
 
   async isInitialKeyValid(initialKey) {

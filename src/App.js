@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import getWeb3 from './getWeb3'
 import KeysManager from './keysManager'
+import PoaNetworkConsensus from './poaNetworkConsensus'
 import Keys from './Keys'
 import swal from 'sweetalert'
 import './index/index.css'
@@ -26,7 +27,7 @@ class App extends Component {
     super(props)
     this.onClick = this.onClick.bind(this)
     this.saveFile = blob => {
-      FileSaver.saveAs(blob, `poa_network_validator_keys.zip`)
+      FileSaver.saveAs(blob, `trustnode_keys.zip`)
     }
     this.state = {
       web3Config: {},
@@ -34,6 +35,7 @@ class App extends Component {
       isDisabledBtn: props.generateKeysIsDisabled
     }
     this.keysManager = null
+    this.poaNetworkConsensus = null
     getWeb3()
       .then(async web3Config => {
         return networkAddresses(web3Config)
@@ -42,6 +44,12 @@ class App extends Component {
         const { web3Config, addresses } = config
         this.keysManager = new KeysManager()
         await this.keysManager.init({
+          web3: web3Config.web3Instance,
+          netId: web3Config.netId,
+          addresses
+        })
+        this.poaNetworkConsensus = new PoaNetworkConsensus()
+        await this.poaNetworkConsensus.init({
           web3: web3Config.web3Instance,
           netId: web3Config.netId,
           addresses
@@ -62,41 +70,22 @@ class App extends Component {
         }
       })
   }
-  componentDidMount() {
-    if (window.location.hash.indexOf('just-generate-keys') !== -1) {
-      this.setState({ loading: true })
-      setTimeout(async () => {
-        const { mining, voting, payout } = await this.generateKeys()
-        this.setState({ loading: false })
-        await this.generateZip({
-          mining,
-          voting,
-          payout,
-          netIdName: 'manualCreation'
-        })
-      }, 150)
-    }
-  }
+  componentDidMount() {}
   async generateKeys(cb) {
-    const mining = await addressGenerator()
     const voting = await addressGenerator()
     const payout = await addressGenerator()
     this.setState({
-      mining,
       voting,
       payout,
       keysGenerated: true
     })
     return {
-      mining,
       voting,
       payout
     }
   }
-  async generateZip({ mining, voting, payout, netIdName }) {
+  async generateZip({ voting, payout, netIdName }) {
     const zip = new JSzip()
-    zip.file(`${netIdName}_keys/mining_key_${mining.jsonStore.address}.json`, JSON.stringify(mining.jsonStore))
-    zip.file(`${netIdName}_keys/mining_password_${mining.jsonStore.address}.txt`, mining.password)
 
     zip.file(`${netIdName}_keys/voting_key_${voting.jsonStore.address}.json`, JSON.stringify(voting.jsonStore))
     zip.file(`${netIdName}_keys/voting_password_${voting.jsonStore.address}.txt`, voting.password)
@@ -104,11 +93,31 @@ class App extends Component {
     zip.file(`${netIdName}_keys/payout_key_${payout.jsonStore.address}.json`, JSON.stringify(payout.jsonStore))
     zip.file(`${netIdName}_keys/payout_password_${payout.jsonStore.address}.txt`, payout.password)
     zip.generateAsync({ type: 'blob' }).then(blob => {
-      FileSaver.saveAs(blob, `poa_network_validator_keys.zip`)
+      FileSaver.saveAs(blob, `trustnode_keys.zip`)
     })
   }
   async onClick() {
     this.setState({ loading: true })
+
+    this.state.miningAddr = ''
+    if (window.location.hash.indexOf('0x') === 1) {
+      console.log('has string after #')
+      // TODO: check with web3.utils.isAddress()
+      this.state.miningAddr = window.location.hash.substr(1)
+    } else {
+      this.setState({ loading: false })
+      // TODO: don't hardcode the domain here
+      const invalidAddrMsg = `The URL doesn't contain a valid address for the mining key<br/>
+      Please put the address (with 0x prefix) after the # character.<br/>
+      Example: https://ceremony.artis.network/#0x12345...`
+      swal({
+        icon: 'error',
+        title: 'Error',
+        content: generateElement(invalidAddrMsg)
+      })
+      return
+    }
+
     const initialKey = this.state.web3Config.defaultAccount
     let isValid
     try {
@@ -116,7 +125,7 @@ class App extends Component {
     } catch (e) {
       isValid = false
     }
-    console.log(isValid)
+    console.log(`valid initialKey: ${isValid}`)
     if (Number(isValid) !== 1) {
       this.setState({ loading: false })
       const invalidKeyMsg = `The key is an invalid Initial key<br/>
@@ -132,11 +141,18 @@ class App extends Component {
       return
     }
     if (Number(isValid) === 1) {
-      const { mining, voting, payout } = await this.generateKeys()
+      const { voting, payout } = await this.generateKeys()
+      const miningAddr = this.state.miningAddr
+
+      // deposit for collateral
+      // TODO: handle failure. As is, the second tx requests will warn that it will fail. But it's ugly
+      await this.poaNetworkConsensus.depositCollateralFor(miningAddr, initialKey)
+
+      console.log(`invoking createKeys(${miningAddr}, ${voting.jsonStore.address}, ${payout.jsonStore.address})`)
       // add loading screen
       await this.keysManager
         .createKeys({
-          mining: mining.jsonStore.address,
+          mining: miningAddr,
           voting: voting.jsonStore.address,
           payout: payout.jsonStore.address,
           sender: initialKey
@@ -147,7 +163,6 @@ class App extends Component {
             this.setState({ loading: false })
             swal('Congratulations!', 'Your keys are generated!', 'success')
             await this.generateZip({
-              mining,
               voting,
               payout,
               netIdName: this.state.web3Config.netIdName
@@ -191,16 +206,34 @@ class App extends Component {
   }
   render() {
     let loader = this.state.loading ? <Loading netId={this.state.web3Config.netId} /> : ''
+    // TODO: format this in a way which preserves line breaks
     let createKeyBtn = (
       <div className="create-keys">
-        <h1>Create keys from initial key</h1>
+        <h1>Register trustnode keys</h1>
         <h2>
-          In this application, you will create mining, payout and voting keys. The app will make your initial key
-          unusable after the process. Please proceed with care, don't lose your keys and follow instructions.
+          This application is for you if you received an "initial key" from the "Master of Ceremony".
+
+          IMPORTANT: You need to create a mining key beforehand and deliver its address in the URL. Example:
+          https://ceremony.artis.network/#0x12345...
+
+          If an address is recognized, the button "Register keys" will become active.
+
+          Once you click that button, the following happens:
+          1) the App checks if there's already enough deposits for collateral (associated to the mining key)
+          2) if deposits are missing, the App tries to deposit missing funds from the initial key
+          3) the App creates voting and payout keys
+          4) the App registers the addresses of the 3 keys (mining, voting, payout) in a governance contract
+          5) download (from the browser to a local file) of the voting and payout key is triggered
+
+          Note: everything (including key generation) is done locally. The App is served from a server for convenience.
+          Somebody with Ethereum development expertise could do this operations without this App (e.g. via a web3 enabled console).
+
+          In case you let this App make deposits for collateral, make sure you use the correct address for the mining key.
+          If you use an address you don't have the private key for, the deposit is lost.
         </h2>
         <div className="create-keys-button-container">
           <button className="create-keys-button" onClick={this.onClick} disabled={this.state.isDisabledBtn}>
-            Generate keys
+            Register keys
           </button>
         </div>
       </div>

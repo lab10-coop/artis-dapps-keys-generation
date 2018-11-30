@@ -3,18 +3,19 @@ constants.organization = 'poanetwork'
 constants.repoName = 'poa-chain-spec'
 constants.addressesSourceFile = 'contracts.json'
 constants.ABIsSources = {
-  KeysManager: 'KeysManager.abi.json'
+  KeysManager: 'KeysManager.abi.json',
+  PoaNetworkConsensus: 'PoaNetworkConsensus.abi.json'
 }
 constants.userDeniedTransactionPattern = 'User denied transaction'
 
 constants.NETWORKS = {
   '246529': {
-    NAME: 'ARTIS Sigma 1',
+    NAME: 'sigma1.artis',
     BRANCH: 'sigma1',
     TESTNET: false
   },
   '246785': {
-    NAME: 'ARTIS Tau 1',
+    NAME: 'tau1.artis',
     BRANCH: 'tau1',
     TESTNET: true
   }

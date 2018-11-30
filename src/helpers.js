@@ -27,9 +27,13 @@ function ABIURL(branch, contract) {
 
 function getABI(branch, contract) {
   let addr = ABIURL(branch, contract)
-  return fetch(addr).then(function(response) {
-    return response.json()
-  })
+  return fetch(addr)
+    .then(function(response) {
+      return response.json()
+    })
+    .catch(e => {
+      console.error(`couldn't fetch ${addr}: ${e}`)
+    })
 }
 
 function wrongRepoAlert(addr) {

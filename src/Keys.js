@@ -14,19 +14,11 @@ export default class Keys extends Component {
     this.onCopyBtnClick = this.onCopyBtnClick.bind(this)
     this.state = {
       copyBtns: {
-        copyMiningPass: {
-          visible: false,
-          text: 'Copy'
-        },
         copyVotingPass: {
           visible: false,
           text: 'Copy'
         },
         copyPayoutPass: {
-          visible: false,
-          text: 'Copy'
-        },
-        copyMiningKey: {
           visible: false,
           text: 'Copy'
         },
@@ -42,11 +34,9 @@ export default class Keys extends Component {
     }
   }
   componentWillUpdate(nextProps, nextState) {
-    if (this.refs.miningKeyAddress) {
+    if (this.refs.payoutKeyAddress) {
       const Clipboard = require('clipboard')
       // this.clipboard = new Clipboard(this.refs.copyBtn);
-      new Clipboard(this.refs.miningKeyAddress)
-      new Clipboard(this.refs.miningKeyPass)
       new Clipboard(this.refs.payoutKeyAddress)
       new Clipboard(this.refs.payoutKeyPass)
       new Clipboard(this.refs.votingKeyAddress)
@@ -76,75 +66,6 @@ export default class Keys extends Component {
     return (
       <div className="container">
         <div className="keys">
-          <div className="keys-i">
-            <p className="keys-title">Mining key</p>
-            <div className="keys-hash-container">
-              <p className="keys-hash" id="miningKey">
-                0x
-                {this.props.mining.jsonStore.address}
-              </p>
-              <Tooltip
-                visible={this.state.copyBtns.copyMiningKey.visible}
-                animation="zoom"
-                trigger="hover"
-                onVisibleChange={() => {
-                  this.onVisibleChange('copyMiningKey')
-                }}
-                placement="right"
-                overlay={this.state.copyBtns.copyMiningKey.text}
-              >
-                <span
-                  id="copyMiningKey"
-                  onClick={this.onCopyBtnClick}
-                  className="copy"
-                  ref="miningKeyAddress"
-                  data-clipboard-text={'0x' + this.props.mining.jsonStore.address}
-                />
-              </Tooltip>
-            </div>
-            <p className="keys-hash">
-              <label className="password-label">Password:</label>
-              <input
-                disabled={true}
-                defaultValue={this.props.mining.password}
-                type="password"
-                id="miningKeyPass"
-                className="pass"
-              />
-              <Tooltip
-                visible={this.state.copyBtns.copyMiningPass.visible}
-                animation="zoom"
-                trigger="hover"
-                onVisibleChange={() => {
-                  this.onVisibleChange('copyMiningPass')
-                }}
-                placement="right"
-                overlay={this.state.copyBtns.copyMiningPass.text}
-              >
-                <span
-                  id="copyMiningPass"
-                  onClick={this.onCopyBtnClick}
-                  className="copy"
-                  ref="miningKeyPass"
-                  data-clipboard-text={this.props.mining.password}
-                />
-              </Tooltip>
-            </p>
-            <p className="keys-description">
-              Download this key and use it in your mining node to validate blocks in the network. Mined coins will be
-              deposited to your payout account.
-            </p>
-            <div className="keys-footer">
-              <a
-                className="keys-download"
-                id="miningKeyDownload"
-                href={encodeJson(this.props.mining.jsonStore)}
-                download={`mining_${this.props.mining.jsonStore.address}.json`}
-              >
-                Download Mining Key
-              </a>
-            </div>
-          </div>
           <div className="keys-i">
             <p className="keys-title">Payout key</p>
             <div className="keys-hash-container">
