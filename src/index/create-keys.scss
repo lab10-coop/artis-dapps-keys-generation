@@ -6,7 +6,6 @@
 .create-keys {
   @extend %item;
   padding: 30px 20px;
-
   h1 {
     @extend %title;
     margin-bottom: 20px;
@@ -15,6 +14,14 @@
   h2 {
     @extend %description;
     margin-bottom: 20px;
+  }
+
+  p {
+    @extend %description;
+  }
+
+  li {
+    @extend %description;
   }
 
   &-button {

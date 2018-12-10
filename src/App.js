@@ -210,27 +210,24 @@ class App extends Component {
     let createKeyBtn = (
       <div className="create-keys">
         <h1>Register trustnode keys</h1>
-        <h2>
-          This application is for you if you received an "initial key" from the "Master of Ceremony".
-
-          IMPORTANT: You need to create a mining key beforehand and deliver its address in the URL. Example:
-          https://ceremony.artis.network/#0x12345...
-
-          If an address is recognized, the button "Register keys" will become active.
-
-          Once you click that button, the following happens:
-          1) the App checks if there's already enough deposits for collateral (associated to the mining key)
-          2) if deposits are missing, the App tries to deposit missing funds from the initial key
-          3) the App creates voting and payout keys
-          4) the App registers the addresses of the 3 keys (mining, voting, payout) in a governance contract
-          5) download (from the browser to a local file) of the voting and payout key is triggered
-
-          Note: everything (including key generation) is done locally. The App is served from a server for convenience.
-          Somebody with Ethereum development expertise could do this operations without this App (e.g. via a web3 enabled console).
-
-          In case you let this App make deposits for collateral, make sure you use the correct address for the mining key.
-          If you use an address you don't have the private key for, the deposit is lost.
-        </h2>
+        <div className="center">
+        <p>This application is for you if you received an <b>Initial Key</b> from the <b>Master of Ceremony</b>. <br /> <br /></p>
+        <p> <b>IMPORTANT:</b> You need to create a mining key beforehand and deliver its address in the URL. Example:<br />
+          https://ceremony.artis.network/#0x12345...<br /> <br /></p>
+        <p> If an address is recognized, the button &quot;Register keys&quot; will become active.<br /> <br /></p>
+        <p> Once you click that button, the following happens:<br /> </p>
+        <ol>
+          <li>the App checks if there's already enough deposits for collateral (associated to the mining key)</li>
+          <li> if deposits are missing, the App tries to deposit missing funds from the initial key</li>
+          <li> the App creates voting and payout keys</li>
+          <li> the App registers the addresses of the 3 keys (mining, voting, payout) in a governance contract</li>
+          <li> download (from the browser to a local file) of the voting and payout key is triggered</li>
+        </ol>
+        <p> Note: everything (including key generation) is done locally. The App is served from a server for convenience.<br />
+          Somebody with Ethereum development expertise could do this operations without this App (e.g. via a web3 enabled console).</p>
+        <p> In case you let this App make deposits for collateral, make sure you use the correct address for the mining key.<br />
+          If you use an address you don't have the private key for, the deposit is lost.</p>
+          </div>
         <div className="create-keys-button-container">
           <button className="create-keys-button" onClick={this.onClick} disabled={this.state.isDisabledBtn}>
             Register keys
