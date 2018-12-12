@@ -18,23 +18,25 @@ export default class PoaNetworkConsensus {
     return await this.instance.methods.freeDeposits(miningKey).call()
   }
 
-  /// checks existing deposits for miningKey, deposits missing amount
-  /// TODO: behaviour when already enough deposits or sender without funds untested
-  async depositCollateralFor(miningKey, sender) {
+  async neededCollateral() {
+    return await this.instance.methods.neededCollateral().call()
+  }
+
+  async hasNeededDeposits(miningKey) {
     const curDeposits = await this.currentDepositsOf(miningKey)
-    const neededCollateral = await this.instance.methods.neededCollateral().call()
+    const neededCollateral = await this.neededCollateral()
 
     const BN = this.web3.utils.BN
-    const missingDepositsBN = new BN(neededCollateral).sub(new BN(curDeposits))
-    console.log(`missing deposits: ${missingDepositsBN.toString()}`)
-    // >= 0 ?
-    if (missingDepositsBN.gte(0)) {
-      console.log(`making deposit for collateral...`)
 
-      return this.instance.methods.depositFor(miningKey).send({
-        from: sender,
-        value: missingDepositsBN
-      })
-    }
+    const curDepositsBN = new BN(curDeposits)
+    const neededCollateralBN = new BN(neededCollateral)
+
+    console.log(`curDep: ${curDeposits}, neededColl: ${neededCollateral}`)
+
+    const ret = curDepositsBN.gte(neededCollateralBN)
+    console.log(`ret is ${ret}`)
+
+    // a.gte(b): a is greater than or equal b
+    return curDepositsBN.gte(neededCollateralBN)
   }
 }

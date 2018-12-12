@@ -22,6 +22,8 @@ function generateElement(msg) {
   return errorNode
 }
 
+let web3
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -58,6 +60,7 @@ class App extends Component {
           isDisabledBtn: false,
           web3Config
         })
+        web3 = web3Config.web3Instance
       })
       .catch(error => {
         if (error.msg) {
@@ -109,7 +112,8 @@ class App extends Component {
       // TODO: don't hardcode the domain here
       const invalidAddrMsg = `The URL doesn't contain a valid address for the mining key<br/>
       Please put the address (with 0x prefix) after the # character.<br/>
-      Example: https://ceremony.artis.network/#0x12345...`
+      Example: https://ceremony.artis.network/#0x12345...<br/>
+      (if you already did, try to refresh)`
       swal({
         icon: 'error',
         title: 'Error',
@@ -126,7 +130,7 @@ class App extends Component {
       isValid = false
     }
     console.log(`valid initialKey: ${isValid}`)
-    if (Number(isValid) !== 1) {
+    if (Number(isValid) === 0) {
       this.setState({ loading: false })
       const invalidKeyMsg = `The key is an invalid Initial key<br/>
       or you're connected to the incorrect chain!<br/>
@@ -139,70 +143,119 @@ class App extends Component {
         content: generateElement(invalidKeyMsg)
       })
       return
+    } else if (Number(isValid) === 2) {
+      this.setState({ loading: false })
+      const invalidKeyMsg = `This initial key was already used`
+      swal({
+        icon: 'error',
+        title: 'Error',
+        content: generateElement(invalidKeyMsg)
+      })
+      return
+    } else if (Number(isValid) !== 1) {
+      this.setState({ loading: false })
+      const invalidStateMsg = `Unknown state for initial key: ${Number(isValid)}`
+      swal({
+        icon: 'error',
+        title: 'Error',
+        content: generateElement(invalidStateMsg)
+      })
+      return
     }
-    if (Number(isValid) === 1) {
-      const { voting, payout } = await this.generateKeys()
-      const miningAddr = this.state.miningAddr
 
-      // deposit for collateral
-      // TODO: handle failure. As is, the second tx requests will warn that it will fail. But it's ugly
-      await this.poaNetworkConsensus.depositCollateralFor(miningAddr, initialKey)
+    const miningAddr = this.state.miningAddr
+    if (!web3.utils.isAddress(miningAddr)) {
+      this.setState({ loading: false })
+      const missingDeposits = `Given mining key is not a valid ARTIS address: ${miningAddr}`
+      swal({
+        icon: 'error',
+        title: 'Error',
+        content: generateElement(missingDeposits)
+      })
+      return
+    }
 
-      console.log(`invoking createKeys(${miningAddr}, ${voting.jsonStore.address}, ${payout.jsonStore.address})`)
-      // add loading screen
-      await this.keysManager
-        .createKeys({
-          mining: miningAddr,
-          voting: voting.jsonStore.address,
-          payout: payout.jsonStore.address,
-          sender: initialKey
-        })
-        .then(async receipt => {
-          console.log(receipt)
-          if (receipt.status === true || receipt.status === '0x1') {
-            this.setState({ loading: false })
-            swal('Congratulations!', 'Your keys are generated!', 'success')
-            await this.generateZip({
-              voting,
-              payout,
-              netIdName: this.state.web3Config.netIdName
-            })
-          } else {
-            this.setState({ loading: false, keysGenerated: false })
-            let content = document.createElement('div')
-            let msg = `Transaction failed`
-            content.innerHTML = `<div>
-            Something went wrong!<br/><br/>
-            Please contact Master Of Ceremony<br/><br/>
-            ${msg}
-          </div>`
-            swal({
-              icon: 'error',
-              title: 'Error',
-              content: content
-            })
-          }
-        })
-        .catch(error => {
-          console.error(error.message)
-          this.setState({ loading: false, keysGenerated: false })
+    // check if needed deposits were made
+    if (!(await this.poaNetworkConsensus.hasNeededDeposits(miningAddr))) {
+      this.setState({ loading: false })
+      const missingDeposits = `Required deposits for collateral are not in place for mining key ${miningAddr}`
+      swal({
+        icon: 'error',
+        title: 'Error',
+        content: generateElement(missingDeposits)
+      })
+      return
+    }
+
+    const { voting, payout } = await this.generateKeys()
+    console.log(`voting: ${JSON.stringify(voting)}`)
+    console.log(`payout: ${JSON.stringify(payout)}`)
+
+    console.log(`invoking createKeys(${miningAddr}, ${voting.jsonStore.address}, ${payout.jsonStore.address})`)
+    // add loading screen
+    await this.keysManager
+      .createKeys({
+        mining: miningAddr,
+        voting: voting.jsonStore.address,
+        payout: payout.jsonStore.address,
+        sender: initialKey
+      })
+      .then(async receipt => {
+        console.log(receipt)
+        if (receipt.status === true || receipt.status === '0x1') {
+          this.setState({ loading: false })
+          swal('Congratulations!', 'Your keys are generated!', 'success')
+          await this.generateZip({
+            voting,
+            payout,
+            netIdName: this.state.web3Config.netIdName
+          })
+        } else {
+          this.setState({ loading: false, keysGenerated: true })
           let content = document.createElement('div')
-          let msg
-          if (error.message.includes(constants.userDeniedTransactionPattern))
-            msg = `Error: ${constants.userDeniedTransactionPattern}`
-          else msg = error.message
+          let msg = `Transaction failed`
           content.innerHTML = `<div>
-          Something went wrong!<br/><br/>
-          Please contact Master Of Ceremony<br/><br/>
-          ${msg}
+            Something may have gone wrong!<br/>
+            Please do NOT close or refresh the page!<br/>
+            Save the voting and payout keys and passwords!<br/>
+            Contact the Master of Ceremony!<br/>
+            <br/>
+            ${msg}
         </div>`
           swal({
             icon: 'error',
             title: 'Error',
             content: content
           })
+        }
+      })
+      .catch(error => {
+        console.error(error.message)
+        this.setState({ loading: false, keysGenerated: false })
+        let content = document.createElement('div')
+        let msg
+        if (error.message.includes(constants.userDeniedTransactionPattern)) {
+          msg = `Error: ${constants.userDeniedTransactionPattern}`
+          content.innerHTML = `<div>
+            Transaction denied by user!<br/><br/>
+            ${msg}
+          </div>`
+        } else {
+          msg = error.message
+          content.innerHTML = `<div>
+            Something went wrong!<br/>
+            Please do NOT close or refresh the page!<br/>
+            Contact the Master of Ceremony!<br/>
+            <br/>
+            ${msg}
+          </div>`
+        }
+        swal({
+          icon: 'error',
+          title: 'Error',
+          content: content
         })
-    }
+      })
   }
   render() {
     let loader = this.state.loading ? <Loading netId={this.state.web3Config.netId} /> : ''

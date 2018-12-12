@@ -25,9 +25,11 @@ export default class KeysManager {
       getInitialKeyStatus(initialKey)
         .call()
         .then(function(result) {
+          console.log(`getInitialKeyStatus success: ${result}`)
           resolve(result)
         })
         .catch(function(e) {
+          console.error(`getInitialKeyStatus exception: ${e}`)
           reject(false)
         })
     })
