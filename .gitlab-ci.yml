@@ -10,4 +10,3 @@ staging:
     - npm ci
     - rm -r build
     - CI=false npm run build
-    - ./update-artis-network-specs.sh
