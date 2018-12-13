@@ -27,7 +27,7 @@ function ABIURL(branch, contract) {
 
 function getABI(branch, contract) {
   let addr = ABIURL(branch, contract)
-  return fetch(addr)
+  return fetch(addr, { cache: 'no-cache' })
     .then(function(response) {
       return response.json()
     })
