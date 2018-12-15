@@ -264,23 +264,21 @@ class App extends Component {
       <div className="create-keys">
         <h1>Register trustnode keys</h1>
         <div className="center">
-        <p>This application is for you if you received an <b>Initial Key</b> from the <b>Master of Ceremony</b>. <br /> <br /></p>
-        <p> <b>IMPORTANT:</b> You need to create a mining key beforehand and deliver its address in the URL. Example:<br />
-          https://ceremony.artis.network/#0x12345...<br /> <br /></p>
-        <p> If an address is recognized, the button &quot;Register keys&quot; will become active.<br /> <br /></p>
-        <p> Once you click that button, the following happens:<br /> </p>
-        <ol>
-          <li>the App checks if there's already enough deposits for collateral (associated to the mining key)</li>
-          <li> if deposits are missing, the App tries to deposit missing funds from the initial key</li>
-          <li> the App creates voting and payout keys</li>
-          <li> the App registers the addresses of the 3 keys (mining, voting, payout) in a governance contract</li>
-          <li> download (from the browser to a local file) of the voting and payout key is triggered</li>
-        </ol>
-        <p> Note: everything (including key generation) is done locally. The App is served from a server for convenience.<br />
-          Somebody with Ethereum development expertise could do this operations without this App (e.g. via a web3 enabled console).</p>
-        <p> In case you let this App make deposits for collateral, make sure you use the correct address for the mining key.<br />
-          If you use an address you don't have the private key for, the deposit is lost.</p>
-          </div>
+          <p>This application is for you if you received an <b>Initial Key</b> from the <b>Master of Ceremony</b>. <br /> <br /></p>
+          <p> <b>IMPORTANT:</b> You need to create a mining key beforehand and deliver its address in the URL. Example:<br />
+            https://ceremony.artis.network/#0x12345...<br /> <br /></p>
+          <p> If an address is recognized, the button &quot;REGISTER KEYS&quot; will become active.<br /> <br /></p>
+          <p> Once you click that button, the following happens:<br /> </p>
+          <ol>
+            <li> check if the address provided via URL for the mining key is a valid Ethereum address</li>
+            <li> check if there's enough deposits (4.5M ATS) for collateral associated to the mining key</li>
+            <li> creation of voting and payout keys</li>
+            <li> registration of the 3 addresses (mining, voting, payout) in a governance contract (triggers a transaction signing request)</li>
+            <li> opening of a saving dialog for the two newly generated keys (in a zip file)</li>
+          </ol>
+          <p> Note: everything (including key generation) is done locally. The application is loaded from a webserver for convenience.<br />
+          Somebody with Ethereum development expertise could do this operations without this application (e.g. via a web3 enabled console).</p>
+        </div>
         <div className="create-keys-button-container">
           <button className="create-keys-button" onClick={this.onClick} disabled={this.state.isDisabledBtn}>
             Register keys
