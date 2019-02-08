@@ -4,7 +4,7 @@ stages:
 staging:
   stage: deploy
   script:
-    - cd /var/www/nginx/poa-dapps-keys-generation
+    - cd /var/www/nginx/artis-dapps-keys-generation
     - git pull
     - . ~/.nvm/nvm.sh
     - npm ci
